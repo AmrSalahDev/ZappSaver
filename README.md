@@ -20,7 +20,18 @@ This Flutter app lets you:
 
 ---
 
-### ✨ Features
+## ✨ Features
+
+- 📥 **Save WhatsApp Statuses** – Automatically detect and save image & video statuses before they disappear.
+- 🕵️ **Recover Deleted Messages** – View messages even after they've been deleted by the sender.
+- 🔔 **Smart Notifications** – Get notified instantly when someone deletes a message.
+- 📁 **File Manager Integration** – Easily view, share, or delete saved media from inside the app.
+- 🎥 **Video Thumbnails** – Preview video statuses with generated thumbnails.
+- 🌐 **Multi-language Support** – Choose your preferred app language on first launch.
+- 📱 **Direct Chat** – Start WhatsApp chats without saving the contact.
+- 🔐 **Privacy First** – All data is stored locally and never uploaded.
+- 💡 **Clean UI** – Minimal, modern interface inspired by Figma design.
+
 
 ---
 
@@ -103,7 +114,7 @@ Here’s the app UI design created in Figma:
   <img src="screenshots/home_screen.png" width="45%"/>
   <img src="screenshots/status_screen.png" width="45%"/>
   <img src="screenshots/single_view_screen.png" width="45%"/>
-  <img src="screenshots/sdirct_chat_screen.png" width="45%"/>
+  <img src="screenshots/direct_chat_screen.png" width="45%"/>
 </p>
 
 
