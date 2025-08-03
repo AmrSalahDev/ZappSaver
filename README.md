@@ -39,51 +39,49 @@ flutter run
 
 ## 📦 Dependencies Used
 
-Below is a list of packages used in this Flutter project along with their versions:
+Below is a list of the main packages used in this Flutter project:
 
 ### 🚀 Core
-- `flutter`: Flutter SDK
-- `cupertino_icons: ^1.0.8` – iOS-style icons
+- **flutter** – Flutter SDK  
+- **cupertino_icons: ^1.0.8** – iOS-style icons
 
-### 📦 State Management
-- `flutter_bloc: ^9.1.1` – Bloc pattern for managing app state
+### 📦 State Management & Dependency Injection
+- **flutter_bloc: ^9.1.1** – Bloc pattern for state management  
+- **get_it: ^8.0.3** – Simple dependency injection
 
-### 🎨 UI Components
-- `country_flags: ^3.3.0` – 
-- `awesome_dialog: ^3.2.1` – Beautiful animated dialogs
-- `chewie: ^1.12.1` – 
-- `flutter_svg: ^2.2.0` – SVG image rendering
-- `flutter_advanced_drawer: ^1.5.0`
-- ` toastification: ^3.0.3` 
+### 🎨 UI & Animations
+- **awesome_dialog: ^3.2.1** – Beautiful animated dialogs  
+- **chewie: ^1.12.1** – Customizable video player  
+- **flutter_advanced_drawer: ^1.5.0** – Elegant drawer UI  
+- **flutter_svg: ^2.2.0** – SVG rendering  
+- **toastification: ^3.0.3** – Toast notification system  
+- **country_flags: ^3.3.0** – Country flag icons
 
-### 🔄 Routing
-- `go_router: ^16.0.0` – Declarative navigation
+### 🔄 Routing & Localization
+- **go_router: ^16.0.0** – Declarative navigation  
+- **flutter_localization: ^0.3.3** – Localized content support
 
-### 📷 Media & Camera
-- `google_mlkit_barcode_scanning: ^0.14.1` – Barcode scanner using ML Kit
-- `qr_code_scanner_plus: ^2.0.10+1` – QR code scanning
-- `qr_flutter: ^4.1.0` – Generate QR codes
-- `image_picker: ^1.1.2` – Pick images from gallery or camera
-- `image_gallery_saver_plus: ^4.0.1` – Save images to gallery
+### 📱 Native Features & Permissions
+- **android_intent_plus: ^5.3.0** – Android Intents  
+- **path_provider: ^2.1.5** – Access filesystem directories  
+- **permission_handler: ^12.0.1** – Manage permissions  
+- **shared_preferences: ^2.5.3** – Store key-value pairs  
+- **change_app_package_name: ^1.5.0** – Update package names easily  
+- **flutter_launcher_icons: ^0.14.4** – Auto-generate launcher icons  
+- **notification_listener_service: ^0.3.4** – Listen to WhatsApp notifications
 
-### 📱 Native Features
-- `android_intent_plus: ^5.3.0` – Send Android Intents
-- `package_info_plus: ^8.3.0` – Get app package information
-- `path_provider: ^2.1.5` – Access filesystem paths
-- `permission_handler: ^12.0.1` – Request runtime permissions
-- `vibration: ^3.1.3` – Control device vibration
-- `wifi_iot: ^0.3.19+2` – Manage WiFi connections
+### 📷 Media & File Handling
+- **video_player: ^2.10.0** – Play video files  
+- **video_thumbnail: ^0.5.6** – Generate video thumbnails  
+- **open_filex: ^4.7.0** – Open files using other apps  
+- **share_plus: ^11.0.0** – Share content
 
-### 💾 Data Storage
-- `hive: ^2.2.3` – Lightweight key-value database
-- `hive_flutter: ^1.1.0` – Hive integration with Flutter
-- `hive_generator: ^2.0.1` – Code generation for Hive models
+### 📐 Utilities
+- **extension: ^0.6.0** – Useful Dart extension methods
 
-### 🧪 Code Generation & Utilities
-- `build_runner: ^2.5.4` – Used for code generation
-- `uuid: ^4.5.1` – Generate unique IDs
-- `intl: ^0.20.2` – Internationalization and formatting
-- `share_plus: ^11.0.0` – Share content with other apps
+### 📢 Monetization
+- **google_mobile_ads: ^6.0.0** – AdMob for in-app ads
+
 
 ### 🎨 Figma Design
 
