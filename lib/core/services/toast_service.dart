@@ -9,7 +9,7 @@ abstract class IToastService {
     required String message,
   });
   void showErrorToast(String message);
-  void showInfoToast(String message);
+  void showInfoToast({required BuildContext context, required String message});
 }
 
 class ToastService extends IToastService {
@@ -17,7 +17,25 @@ class ToastService extends IToastService {
   void showErrorToast(String message) {}
 
   @override
-  void showInfoToast(String message) {}
+  void showInfoToast({required BuildContext context, required String message}) {
+    toastification.show(
+      context: context,
+      title: Text(
+        message,
+        style: TextStyle(
+          color: AppColors.primaryColor,
+          fontSize: context.textScaler.scale(16),
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+      type: ToastificationType.info,
+      style: ToastificationStyle.flat,
+      icon: Icon(Icons.info_rounded, color: AppColors.primaryColor),
+      alignment: Alignment.bottomCenter,
+      autoCloseDuration: const Duration(seconds: 3),
+    );
+  }
 
   @override
   void showSuccessToast({

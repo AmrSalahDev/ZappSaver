@@ -303,6 +303,101 @@ class S {
       args: [],
     );
   }
+
+  /// `Type country name or code`
+  String get typeCountryNameOrCode {
+    return Intl.message(
+      'Type country name or code',
+      name: 'typeCountryNameOrCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your number`
+  String get enterYourNumber {
+    return Intl.message(
+      'Enter your number',
+      name: 'enterYourNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write your message...`
+  String get writeYourMessage {
+    return Intl.message(
+      'Write your message...',
+      name: 'writeYourMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter valid number`
+  String get enterValidNumber {
+    return Intl.message(
+      'Enter valid number',
+      name: 'enterValidNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send`
+  String get send {
+    return Intl.message('Send', name: 'send', desc: '', args: []);
+  }
+
+  /// `Terms of Service | Privacy Policy`
+  String get termsAndPolicy {
+    return Intl.message(
+      'Terms of Service | Privacy Policy',
+      name: 'termsAndPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comming Soon`
+  String get commingSoon {
+    return Intl.message(
+      'Comming Soon',
+      name: 'commingSoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No videos found`
+  String get noVideosFound {
+    return Intl.message(
+      'No videos found',
+      name: 'noVideosFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No photos found`
+  String get noPhotosFound {
+    return Intl.message(
+      'No photos found',
+      name: 'noPhotosFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Storage permission is required to load statuses`
+  String get storagePermissionRequired {
+    return Intl.message(
+      'Storage permission is required to load statuses',
+      name: 'storagePermissionRequired',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

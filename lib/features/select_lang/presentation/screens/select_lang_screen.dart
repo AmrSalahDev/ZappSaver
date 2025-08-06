@@ -8,8 +8,8 @@ import 'package:flutter_status_up/features/widgets/custom_button.dart';
 import 'package:flutter_status_up/features/widgets/system_ui_wrapper.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/language_model.dart';
-import '../cubit/language_cubit.dart';
-import '../cubit/language_state.dart';
+import '../../../../application/cubits/language_cubit.dart';
+import '../../../../application/cubits/language_state.dart';
 import '../../../../generated/l10n.dart';
 
 class LanguageScreen extends StatelessWidget {

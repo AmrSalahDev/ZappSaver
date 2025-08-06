@@ -1,8 +1,17 @@
 part of 'status_cubit.dart';
 
-@immutable
 abstract class StatusState {}
 
 class StatusInitial extends StatusState {}
 
-class StatusUpdated extends StatusState {}
+class StatusLoading extends StatusState {}
+
+class StatusLoaded extends StatusState {
+  final List<File> files;
+  StatusLoaded(this.files);
+}
+
+class StatusError extends StatusState {
+  final String message;
+  StatusError(this.message);
+}

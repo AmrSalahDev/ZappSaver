@@ -8,6 +8,7 @@ import 'package:flutter_status_up/core/constants/app_images.dart';
 import 'package:flutter_status_up/core/extensions/context_extensions.dart';
 import 'package:flutter_status_up/core/routes/app_router.dart';
 import 'package:flutter_status_up/core/services/di/di.dart';
+import 'package:flutter_status_up/core/services/toast_service.dart';
 import 'package:flutter_status_up/core/utils/permission_utils.dart';
 import 'package:flutter_status_up/features/widgets/system_ui_wrapper.dart';
 import 'package:flutter_status_up/generated/l10n.dart';
@@ -27,21 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   late final RewardedAdCubit _rewardedAdCubit;
   late final AdvancedDrawerController _advancedDrawerController;
 
-  void checkPermission() async {
-    await PermissionUtils.notificationPermissionStatus(
-      onEnabled: () {
-        debugPrint("Notification permission enabled");
-      },
-      onDisabled: () {
-        PermissionUtils.requestNotificationPermission();
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
-    checkPermission();
     _bannerAdCubit = getIt<BannerAdCubit>();
     _rewardedAdCubit = getIt<RewardedAdCubit>();
     _advancedDrawerController = AdvancedDrawerController();
@@ -68,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       statusBarIconBrightness: Brightness.light,
       navigationBarColor: Colors.white,
       navigationBarIconBrightness: Brightness.dark,
-      child: CustomAppDrawer(
+      child: CustomHomeDrawer(
         advancedDrawerController: _advancedDrawerController,
         child: Scaffold(
           bottomNavigationBar: BlocBuilder<BannerAdCubit, BannerAd?>(
@@ -107,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       CustomCard(
                         title: S.of(context).directChat,
                         iconPath: AppImages.send,
+                        onTap: () => context.push(AppRouter.directChat),
                       ),
                       CustomCard(
                         title: S.of(context).savedFiles,
@@ -212,10 +202,22 @@ class _HomeScreenState extends State<HomeScreen> {
               S.of(context).whatsapp,
             ),
           ),
-          _buildCard(
-            context,
-            AppImages.whatsappBusiness,
-            S.of(context).whatsappBusiness,
+          GestureDetector(
+            onTap: () {
+              _rewardedAdCubit.showIfReady(
+                onRewardEarned: () {
+                  context.push(AppRouter.status, extra: false);
+                },
+                elseDoThis: () {
+                  context.push(AppRouter.status, extra: false);
+                },
+              );
+            },
+            child: _buildCard(
+              context,
+              AppImages.whatsappBusiness,
+              S.of(context).whatsappBusiness,
+            ),
           ),
           //_buildCard(context, AppImages.whatsappWeb, S.of(context).whatsappWeb),
         ],
@@ -325,10 +327,10 @@ class CustomCard extends StatelessWidget {
   }
 }
 
-class CustomAppDrawer extends StatelessWidget {
+class CustomHomeDrawer extends StatelessWidget {
   final Widget child;
   final AdvancedDrawerController advancedDrawerController;
-  const CustomAppDrawer({
+  const CustomHomeDrawer({
     super.key,
     required this.child,
     required this.advancedDrawerController,
@@ -404,7 +406,12 @@ class CustomAppDrawer extends StatelessWidget {
                 ),
                 Divider(color: Colors.white54),
                 ListTile(
-                  onTap: () {},
+                  onTap: () {
+                    getIt.get<ToastService>().showInfoToast(
+                      context: context,
+                      message: S.of(context).commingSoon,
+                    );
+                  },
                   leading: Icon(Icons.share_outlined),
                   title: Text(S.of(context).shareApp),
                 ),
@@ -423,7 +430,7 @@ class CustomAppDrawer extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: Colors.white54),
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Text('Terms of Service | Privacy Policy'),
+                    child: Text(S.of(context).termsAndPolicy),
                   ),
                 ),
               ],

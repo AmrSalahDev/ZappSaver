@@ -36,5 +36,15 @@
     "audio":"Audio",
     "recording":"Voice",
     "documents":"Documents",
-    "recoveryMessages":"Recovery Messages"
+    "recoveryMessages":"Recovery Messages",
+    "typeCountryNameOrCode":"Type country name or code",
+    "enterYourNumber":"Enter your number",
+    "writeYourMessage":"Write your message...",
+    "enterValidNumber":"Enter valid number",
+    "send":"Send",
+    "termsAndPolicy":"Terms of Service | Privacy Policy",
+    "commingSoon":"Comming Soon",
+    "noVideosFound":"No videos found",
+    "noPhotosFound":"No photos found",
+    "storagePermissionRequired":"Storage permission is required to load statuses"
 }

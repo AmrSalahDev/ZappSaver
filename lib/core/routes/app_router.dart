@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_status_up/application/cubits/banner_ad_cubit.dart';
 import 'package:flutter_status_up/core/routes/args/single_view_screen_args.dart';
 import 'package:flutter_status_up/core/services/di/di.dart';
+import 'package:flutter_status_up/features/direct_chat/presentation/cubit/country_picker_cubit.dart';
+import 'package:flutter_status_up/features/direct_chat/presentation/screens/direct_chat_screen.dart';
 import 'package:flutter_status_up/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter_status_up/features/recovery_messages/presentation/screens/recovery_chat_screen.dart';
 import 'package:flutter_status_up/features/recovery_messages/presentation/screens/recovery_messages_screen.dart';
@@ -82,7 +84,10 @@ final router = GoRouter(
     ),
     GoRoute(
       path: AppRouter.directChat,
-      builder: (context, state) => const StatusScreen(isFromWhatsapp: true),
+      builder: (context, state) => BlocProvider(
+        create: (context) => CountryPickerCubit(),
+        child: const DirectChatScreen(),
+      ),
     ),
     GoRoute(
       path: AppRouter.recoveryMessages,

@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_status_up/application/cubits/banner_ad_cubit.dart';
@@ -10,11 +7,12 @@ import 'package:flutter_status_up/core/extensions/context_extensions.dart';
 import 'package:flutter_status_up/core/routes/app_router.dart';
 import 'package:flutter_status_up/core/routes/args/single_view_screen_args.dart';
 import 'package:flutter_status_up/core/services/di/di.dart';
-import 'package:flutter_status_up/core/services/toast_service.dart';
 import 'package:flutter_status_up/core/utils/permission_utils.dart';
-import 'package:flutter_status_up/core/utils/video_utils.dart';
-import 'package:flutter_status_up/core/utils/whatsapp_utils.dart';
 import 'package:flutter_status_up/features/status/presentation/cubit/status_cubit.dart';
+import 'package:flutter_status_up/features/status/presentation/cubit/video_thumbnail_cubit.dart';
+import 'package:flutter_status_up/features/status/presentation/widgets/download_part.dart';
+import 'package:flutter_status_up/features/status/presentation/widgets/empty_box.dart';
+import 'package:flutter_status_up/features/status/presentation/widgets/video_thumbnail_widget.dart';
 import 'package:flutter_status_up/features/widgets/custom_app_bar.dart';
 import 'package:flutter_status_up/features/widgets/system_ui_wrapper.dart';
 import 'package:flutter_status_up/generated/l10n.dart';
@@ -56,7 +54,6 @@ class _StatusScreenState extends State<StatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    PermissionUtils.requestStoragePermission();
     return SystemUiWrapper(
       statusBarColor: Colors.white,
       statusBarIconBrightness: Brightness.dark,
@@ -82,7 +79,10 @@ class _StatusScreenState extends State<StatusScreen> {
                 CustomAppBar(title: S.of(context).statuses),
                 SizedBox(height: context.screenHeight * 0.04),
                 Expanded(
-                  child: CustomTabBarView(rewardedAdCubit: _rewardedAdCubit),
+                  child: CustomTabBarView(
+                    rewardedAdCubit: _rewardedAdCubit,
+                    isFromWhatsapp: widget.isFromWhatsapp,
+                  ),
                 ),
               ],
             ),
@@ -95,7 +95,13 @@ class _StatusScreenState extends State<StatusScreen> {
 
 class CustomTabBarView extends StatelessWidget {
   final RewardedAdCubit rewardedAdCubit;
-  const CustomTabBarView({super.key, required this.rewardedAdCubit});
+  final bool isFromWhatsapp;
+
+  const CustomTabBarView({
+    super.key,
+    required this.rewardedAdCubit,
+    required this.isFromWhatsapp,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -131,8 +137,14 @@ class CustomTabBarView extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                WhatsappImagesTab(rewardedAdCubit: rewardedAdCubit),
-                WhatsappVideosTab(rewardedAdCubit: rewardedAdCubit),
+                WhatsappImagesTab(
+                  rewardedAdCubit: rewardedAdCubit,
+                  isFromWhatsapp: isFromWhatsapp,
+                ),
+                WhatsappVideosTab(
+                  rewardedAdCubit: rewardedAdCubit,
+                  isFromWhatsapp: isFromWhatsapp,
+                ),
               ],
             ),
           ),
@@ -142,309 +154,240 @@ class CustomTabBarView extends StatelessWidget {
   }
 }
 
-class WhatsappImagesTab extends StatelessWidget {
+class WhatsappImagesTab extends StatefulWidget {
   final RewardedAdCubit rewardedAdCubit;
-  const WhatsappImagesTab({super.key, required this.rewardedAdCubit});
+  final bool isFromWhatsapp;
+
+  const WhatsappImagesTab({
+    super.key,
+    required this.rewardedAdCubit,
+    required this.isFromWhatsapp,
+  });
+
+  @override
+  State<WhatsappImagesTab> createState() => _WhatsappImagesTabState();
+}
+
+class _WhatsappImagesTabState extends State<WhatsappImagesTab> {
+  late final StatusCubit _statusCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _statusCubit = StatusCubit();
+
+    PermissionUtils.requestStoragePermissions(
+      onGranted: () {
+        _statusCubit.loadImages(isFromWhatsapp: widget.isFromWhatsapp);
+      },
+      onDenied: () {
+        debugPrint('Denied');
+      },
+      onPermanentlyDenied: () {
+        debugPrint('Permanently denied');
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => StatusCubit(),
-      child: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder(
-              future: WhatsappUtils.getWhatsappStatusesImages(),
-              builder: (context, snapshot) => snapshot.hasData
-                  ? GridView.builder(
-                      itemCount: snapshot.data!.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: 3 / 4,
+      create: (context) => _statusCubit,
+      child: BlocBuilder<StatusCubit, StatusState>(
+        builder: (context, state) {
+          if (state is StatusLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is StatusError) {
+            return Center(child: Text(state.message));
+          }
+
+          if (state is StatusLoaded) {
+            final images = state.files;
+
+            if (images.isEmpty) {
+              return EmptyBox(message: S.of(context).noPhotosFound);
+            }
+
+            return RefreshIndicator(
+              color: AppColors.primaryColor,
+              onRefresh: () async {
+                _statusCubit.loadImages(isFromWhatsapp: widget.isFromWhatsapp);
+              },
+              child: GridView.builder(
+                itemCount: images.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 3 / 4,
+                ),
+                itemBuilder: (context, index) {
+                  final file = images[index];
+                  return GestureDetector(
+                    onTap: () {
+                      widget.rewardedAdCubit.showIfReady(
+                        onRewardEarned: () {
+                          context.push(
+                            AppRouter.singleView,
+                            extra: SingleViewScreenArgs(
+                              path: file.path,
+                              initialIndex: index,
+                              isImage: true,
+                            ),
+                          );
+                        },
+                        elseDoThis: () {
+                          context.push(
+                            AppRouter.singleView,
+                            extra: SingleViewScreenArgs(
+                              path: file.path,
+                              initialIndex: index,
+                              isImage: true,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: DownloadPart(
+                      file: file,
+                      thumbnail: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        child: Image.file(file, fit: BoxFit.cover),
                       ),
-                      itemBuilder: (context, index) {
-                        final file = snapshot.data![index];
-                        return GestureDetector(
-                          onTap: () {
-                            rewardedAdCubit.showIfReady(
-                              onRewardEarned: () {
-                                context.push(
-                                  AppRouter.singleView,
-                                  extra: SingleViewScreenArgs(
-                                    path: file.path,
-                                    initialIndex: index,
-                                    isImage: true,
-                                  ),
-                                );
-                              },
-                              elseDoThis: () {
-                                context.push(
-                                  AppRouter.singleView,
-                                  extra: SingleViewScreenArgs(
-                                    path: file.path,
-                                    initialIndex: index,
-                                    isImage: true,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                child: Image.file(file, fit: BoxFit.cover),
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  if (WhatsappUtils.isStatusAlreadySaved(
-                                    file,
-                                  )) {
-                                    WhatsappUtils.deleteStatus(file);
-                                    context
-                                        .read<StatusCubit>()
-                                        .notifyStatusChanged();
-                                    getIt<ToastService>().showSuccessToast(
-                                      context: context,
-                                      message: S.of(context).statusDeleted,
-                                    );
-
-                                    return;
-                                  } else {
-                                    await WhatsappUtils.saveStatus(file);
-                                    if (context.mounted) {
-                                      context
-                                          .read<StatusCubit>()
-                                          .notifyStatusChanged();
-
-                                      getIt<ToastService>().showSuccessToast(
-                                        context: context,
-                                        message: S
-                                            .of(context)
-                                            .statusSavedSuccessfully,
-                                      );
-                                    }
-                                  }
-                                },
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Container(
-                                    height: 30,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor.withAlpha(
-                                        80,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-
-                                    child: BlocBuilder<StatusCubit, StatusState>(
-                                      builder: (context, state) {
-                                        final isSaved =
-                                            WhatsappUtils.isStatusAlreadySaved(
-                                              file,
-                                            );
-
-                                        return Center(
-                                          child: isSaved
-                                              ? Icon(
-                                                  Icons.check_circle_rounded,
-                                                  color: Colors.white,
-                                                )
-                                              : Text(
-                                                  S.of(context).donwload,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: context.textScaler
-                                                        .scale(14),
-                                                  ),
-                                                ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    )
-                  : const Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        ],
+                      isVideo: false,
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+          return SizedBox();
+        },
       ),
     );
   }
 }
 
-class WhatsappVideosTab extends StatelessWidget {
+class WhatsappVideosTab extends StatefulWidget {
   final RewardedAdCubit rewardedAdCubit;
-  const WhatsappVideosTab({super.key, required this.rewardedAdCubit});
+  final bool isFromWhatsapp;
+
+  const WhatsappVideosTab({
+    super.key,
+    required this.rewardedAdCubit,
+    required this.isFromWhatsapp,
+  });
+
+  @override
+  State<WhatsappVideosTab> createState() => _WhatsappVideosTabState();
+}
+
+class _WhatsappVideosTabState extends State<WhatsappVideosTab> {
+  late final StatusCubit _statusCubit;
+  late final VideoThumbnailCubit _thumbnailCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _statusCubit = StatusCubit();
+    _thumbnailCubit = VideoThumbnailCubit();
+
+    PermissionUtils.requestStoragePermissions(
+      onGranted: () {
+        _statusCubit.loadVideos(isFromWhatsapp: widget.isFromWhatsapp);
+      },
+      onDenied: () {
+        debugPrint('Denied');
+      },
+      onPermanentlyDenied: () {
+        debugPrint('Permanently denied');
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _statusCubit.close();
+    _thumbnailCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => StatusCubit(),
-      child: FutureBuilder<List<File>>(
-        future: WhatsappUtils.getWhatsappStatusesVideos(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<StatusCubit>.value(value: _statusCubit),
+        BlocProvider<VideoThumbnailCubit>.value(value: _thumbnailCubit),
+      ],
+      child: BlocBuilder<StatusCubit, StatusState>(
+        builder: (context, state) {
+          if (state is StatusLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final videos = snapshot.data!;
-          return GridView.builder(
-            itemCount: videos.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 3 / 4,
-            ),
-            itemBuilder: (context, index) {
-              final file = videos[index];
+          if (state is StatusError) {
+            return Center(child: Text(state.message));
+          }
 
-              return GestureDetector(
-                onTap: () {
-                  rewardedAdCubit.showIfReady(
-                    onRewardEarned: () {
-                      context.push(
-                        AppRouter.singleView,
-                        extra: SingleViewScreenArgs(
-                          path: file.path,
-                          initialIndex: index,
-                          isImage: false,
-                        ),
+          if (state is StatusLoaded) {
+            final videos = state.files;
+            if (videos.isEmpty) {
+              return EmptyBox(message: S.of(context).noVideosFound);
+            }
+            return RefreshIndicator(
+              color: AppColors.primaryColor,
+              onRefresh: () async {
+                _statusCubit.loadVideos(isFromWhatsapp: widget.isFromWhatsapp);
+              },
+              child: GridView.builder(
+                itemCount: videos.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 3 / 4,
+                ),
+                itemBuilder: (context, index) {
+                  final file = videos[index];
+
+                  return GestureDetector(
+                    onTap: () {
+                      widget.rewardedAdCubit.showIfReady(
+                        onRewardEarned: () {
+                          context.push(
+                            AppRouter.singleView,
+                            extra: SingleViewScreenArgs(
+                              path: file.path,
+                              initialIndex: index,
+                              isImage: false,
+                            ),
+                          );
+                        },
+                        elseDoThis: () {
+                          context.push(
+                            AppRouter.singleView,
+                            extra: SingleViewScreenArgs(
+                              path: file.path,
+                              initialIndex: index,
+                              isImage: false,
+                            ),
+                          );
+                        },
                       );
                     },
-                    elseDoThis: () {
-                      context.push(
-                        AppRouter.singleView,
-                        extra: SingleViewScreenArgs(
-                          path: file.path,
-                          initialIndex: index,
-                          isImage: false,
-                        ),
-                      );
-                    },
+                    child: DownloadPart(
+                      file: file,
+                      thumbnail: VideoThumbnailWidget(videoPath: file.path),
+                      isVideo: true,
+                    ),
                   );
                 },
-                child: Stack(
-                  children: [
-                    FutureBuilder<Uint8List?>(
-                      future: VideoUtils.getVideoThumbnail(file.path),
-                      builder: (context, thumbnailSnapshot) {
-                        if (thumbnailSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primaryColor,
-                              strokeWidth: 2,
-                            ),
-                          );
-                        }
-                        final bytes = thumbnailSnapshot.data;
-                        return Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: bytes != null
-                                ? DecorationImage(
-                                    image: MemoryImage(bytes),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
-                            color: Colors.black12,
-                          ),
-                        );
-                      },
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: Colors.white.withOpacity(0.8),
-                        size: 32,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        if (WhatsappUtils.isStatusAlreadySaved(file)) {
-                          WhatsappUtils.deleteStatus(file);
-                          context.read<StatusCubit>().notifyStatusChanged();
-                          getIt<ToastService>().showSuccessToast(
-                            context: context,
-                            message: S.of(context).statusDeleted,
-                          );
-
-                          return;
-                        } else {
-                          await WhatsappUtils.saveStatus(file);
-                          if (context.mounted) {
-                            context.read<StatusCubit>().notifyStatusChanged();
-
-                            getIt<ToastService>().showSuccessToast(
-                              context: context,
-                              message: S.of(context).statusSavedSuccessfully,
-                            );
-                          }
-                        }
-                      },
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: 30,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withAlpha(80),
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-
-                          child: BlocBuilder<StatusCubit, StatusState>(
-                            builder: (context, state) {
-                              final isSaved =
-                                  WhatsappUtils.isStatusAlreadySaved(file);
-
-                              return Center(
-                                child: isSaved
-                                    ? Icon(
-                                        Icons.check_circle_rounded,
-                                        color: Colors.white,
-                                      )
-                                    : Text(
-                                        S.of(context).donwload,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: context.textScaler.scale(
-                                            14,
-                                          ),
-                                        ),
-                                      ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
+              ),
+            );
+          }
+          return SizedBox();
         },
       ),
     );

@@ -1,4 +1,4 @@
-import '../../domain/entities/language_entity.dart';
+import '../../features/select_lang/domain/entities/language_entity.dart';
 
 abstract class LanguageState {}
 

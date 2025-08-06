@@ -36,6 +36,17 @@
     "documents":"وثائق",
     "sticker":"ملصق",
     "recording":"تسجيل",
-    "recoveryMessages":"استعادة الرسائل"
+    "recoveryMessages":"استعادة الرسائل",
+    "typeCountryNameOrCode":"اكتب اسم الدولة او كودها",
+    "enterYourNumber":"ادخل رقمك",
+    "writeYourMessage":"...اكتب رسالتك",
+    "enterValidNumber":"ادخل رقم صحيح",
+    "send":"ارسل",
+    "termsAndPolicy":"شروط الخدمة | سياسة الخصوصية",
+    "commingSoon":"قريبا",
+    "noVideosFound":"لم يتم العثور على فيديوهات",
+    "noPhotosFound":"لم يتم العثور على صور",
+    "storagePermissionRequired": "مطلوب إذن الوصول إلى التخزين لتحميل الحالات"
+
 
 }

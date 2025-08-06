@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_status_up/core/utils/permission_utils.dart';
 import 'package:path/path.dart' as path;
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WhatsappUtils {
   static const String statusDir =
@@ -121,6 +123,37 @@ class WhatsappUtils {
 
     if (result.status == ShareResultStatus.success) {
       debugPrint('Status shared successfully');
+    }
+  }
+
+  Future<bool> isWhatsAppInstalled() async {
+    final Uri uri = Uri.parse('whatsapp://send?phone=201234567890');
+    return await canLaunchUrl(uri);
+  }
+
+  static Future<void> openWhatsAppAndSend({
+    required String phoneNumber,
+    required String message,
+  }) async {
+    final Uri url = Uri.parse(
+      'https://wa.me/${phoneNumber.replaceAll('+', '')}?text=${Uri.encodeComponent(message)}',
+    );
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch WhatsApp';
+    }
+  }
+
+  static bool isPhoneNumberValid(String phoneNumber) {
+    try {
+      final parsed = PhoneNumber.parse(phoneNumber);
+      debugPrint(parsed.countryCode);
+      debugPrint(parsed.isoCode.name);
+      return parsed.isValid(type: PhoneNumberType.mobile);
+    } catch (e) {
+      return false;
     }
   }
 }

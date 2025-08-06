@@ -28,14 +28,23 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appName": MessageLookupByLibrary.simpleMessage("ZappSaver"),
     "audio": MessageLookupByLibrary.simpleMessage("Audio"),
+    "commingSoon": MessageLookupByLibrary.simpleMessage("Comming Soon"),
     "directChat": MessageLookupByLibrary.simpleMessage("Direct Chat"),
     "documents": MessageLookupByLibrary.simpleMessage("Documents"),
     "donwload": MessageLookupByLibrary.simpleMessage("Download"),
+    "enterValidNumber": MessageLookupByLibrary.simpleMessage(
+      "Enter valid number",
+    ),
+    "enterYourNumber": MessageLookupByLibrary.simpleMessage(
+      "Enter your number",
+    ),
     "getStarted": MessageLookupByLibrary.simpleMessage("Get Started"),
     "gif": MessageLookupByLibrary.simpleMessage("GIF"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "message": MessageLookupByLibrary.simpleMessage("Message"),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
+    "noPhotosFound": MessageLookupByLibrary.simpleMessage("No photos found"),
+    "noVideosFound": MessageLookupByLibrary.simpleMessage("No videos found"),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "photo": MessageLookupByLibrary.simpleMessage("Photo"),
     "photos": MessageLookupByLibrary.simpleMessage("Photos"),
@@ -50,6 +59,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "savedFiles": MessageLookupByLibrary.simpleMessage("Saved Files"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
+    "send": MessageLookupByLibrary.simpleMessage("Send"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "shareApp": MessageLookupByLibrary.simpleMessage("Share App"),
     "shortAppName": MessageLookupByLibrary.simpleMessage(
@@ -69,8 +79,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "statuses": MessageLookupByLibrary.simpleMessage("Statuses"),
     "sticker": MessageLookupByLibrary.simpleMessage("Sticker"),
+    "storagePermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "Storage permission is required to load statuses",
+    ),
     "subtitle": MessageLookupByLibrary.simpleMessage(
       "With us, you won’t miss a thing",
+    ),
+    "termsAndPolicy": MessageLookupByLibrary.simpleMessage(
+      "Terms of Service | Privacy Policy",
+    ),
+    "typeCountryNameOrCode": MessageLookupByLibrary.simpleMessage(
+      "Type country name or code",
     ),
     "video": MessageLookupByLibrary.simpleMessage("Video"),
     "videos": MessageLookupByLibrary.simpleMessage("Videos"),
@@ -78,5 +97,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "whatsapp": MessageLookupByLibrary.simpleMessage("Whatsapp"),
     "whatsappBusiness": MessageLookupByLibrary.simpleMessage("WA Business"),
     "whatsappWeb": MessageLookupByLibrary.simpleMessage("WA Web"),
+    "writeYourMessage": MessageLookupByLibrary.simpleMessage(
+      "Write your message...",
+    ),
   };
 }

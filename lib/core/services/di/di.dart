@@ -6,7 +6,7 @@ import 'package:flutter_status_up/features/select_lang/data/repositories/languag
 import 'package:flutter_status_up/features/select_lang/domain/repositories/language_repository.dart';
 import 'package:flutter_status_up/features/select_lang/domain/usecases/chanage_language_usecase.dart';
 import 'package:flutter_status_up/features/select_lang/domain/usecases/get_saved_lang_usecase.dart';
-import 'package:flutter_status_up/features/select_lang/presentation/cubit/language_cubit.dart';
+import 'package:flutter_status_up/application/cubits/language_cubit.dart';
 import 'package:flutter_status_up/features/single_view/data/repositories/single_view_repo_impl.dart';
 import 'package:flutter_status_up/features/single_view/domain/repositories/single_view_repo.dart';
 import 'package:flutter_status_up/features/single_view/domain/usecases/load_images_paths_usecase.dart';

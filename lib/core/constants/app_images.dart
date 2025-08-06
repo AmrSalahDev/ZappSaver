@@ -19,4 +19,6 @@ class AppImages {
   static const String sticker = 'assets/images/ic_sticker.svg';
   static const String gif = 'assets/images/ic_gif.svg';
   static const String voice = 'assets/images/ic_voice.svg';
+  static const String emptyBox = 'assets/images/ic_empty_box.svg';
+  static const String storage = 'assets/images/ic_storage.svg';
 }
